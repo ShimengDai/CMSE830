@@ -132,6 +132,8 @@ class P_BERTEmbedding(object):
                 outputs = self.model(**inputs)
             embeddings.append(outputs.last_hidden_state[:, 0, :].cpu().numpy().flatten())
         return np.array(embeddings)
+    
+    
 
 class P_GPT2Embedding(object):
     def __init__(self, configs):
