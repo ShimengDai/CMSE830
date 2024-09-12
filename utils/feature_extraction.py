@@ -209,10 +209,10 @@ class BERTEmbedding(object):
 
             # Take the last hidden state which is a sequence of token embeddings
             last_hidden_state = outputs.last_hidden_state  # Shape: (batch_size, sequence_length, embedding_dim)
-            print(last_hidden_state.size())
+            #print(last_hidden_state.size())
             # Remove the extra dimension if necessary
-            last_hidden_state = last_hidden_state.squeeze(1)  # Removes the extra 1 dimension if it exists
-            print(last_hidden_state.size())
+            last_hidden_state = torch.squeeze(last_hidden_state)  # Removes the extra 1 dimension if it exists
+            #print(last_hidden_state.size())
             # Append the 3D tensor for this tweet to the embeddings list
             embeddings.append(last_hidden_state.cpu().numpy())
 
