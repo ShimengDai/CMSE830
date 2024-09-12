@@ -1,0 +1,36 @@
+Corpus:
+  data_dir: /Users/zcguo/Desktop/tweet_classification/data
+  data_filename: CRT_Coded.csv
+  new_data_filename: all_tweets.csv
+
+Data_setup:
+  text_col: text
+  label_col: Revised
+  labels_to_ignore: [9.0]
+  n_classes: 2
+  balance_data: True
+  random_seed: 2023
+  val_ratio: 0.1 # of all data
+  test_ratio: 0.1  # of all data
+  
+Feature_extraction:
+  method: MeanWordEmbedding
+  MeanWordEmbedding_configs:
+    min_count: 1
+  TFIDF:
+    use_idf: True
+
+Training_setup:
+  input_size: 100
+  epochs: 2500
+  batch_size: 16
+  learning_rate: 0.0005
+
+Model_setup:
+  # dropout: 0.3
+  dropout: 0.5
+
+New_data_setup:
+  text_col: text
+  include_first_n: 0 # Include just the first n tweets in the new data. This can be useful for debugging. Set this to 0 if you want to include all data.
+  pred_col: pred # Name of the column containing the predictions for the new data

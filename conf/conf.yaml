@@ -1,0 +1,70 @@
+Corpus:
+  data_dir: "C:\\Users\\daish\\OneDrive\\Desktop\\Project\\data"
+  data_filename: CRT_topic.csv
+  new_data_filename: new_tweets.csv
+
+Data_setup:
+  text_col: text
+  label_col: label
+  labels_to_ignore: [9.0]
+  n_classes: 2
+  balance_data: False
+  random_seed: 2023
+  val_ratio: 0.1
+  test_ratio: 0.1
+  
+
+
+
+Feature_extraction:
+  method: BERTEmbedding # TFIDF # BERTEmbedding # GPT2Embedding # P_BERTEmbedding # P_GPT2Embeddin # MeanWordEmbedding
+  
+  MeanWordEmbedding_configs:
+    min_count: 1
+
+  TFIDF_configs:
+    use_idf: True
+    min_df: 5
+
+  BERTEmbedding_configs:
+    model_name: 'bert-base-uncased'
+    max_length: 512
+
+  GPT2Embedding_configs:
+    model_name: 'gpt2'
+    max_length: 512
+
+  P_BERTEmbedding_configs:
+    model_name: 'bert-base-uncased'
+    max_length: 128
+
+  P_GPT2Embedding_configs:
+    model_name: 'gpt2'
+    max_length: 128
+
+
+
+
+Training_setup:
+  input_size: 3326 # For nonDNN
+  epochs: 20
+  batch_size: 4
+  learning_rate: 0.001
+
+Model_setup:
+  model_name: LSTMModel  # FullyConnected, FullyConnected2, LSTMModel
+  dropout: 0.5
+
+
+New_data_setup:
+  text_col: text
+  include_first_n: 1000 # 0 for total
+  pred_col: pred
+
+NonDNN_setup:
+  classifier: RandomForest
+  RandomForest_configs:
+    n_estimators: [50, 100, 150, 200, 250]
+    max_depth: [10, 20, 30, 40, 50]
+    min_samples_split: [2, 5, 10]
+    min_samples_leaf: [1]
