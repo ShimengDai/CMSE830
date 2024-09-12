@@ -53,7 +53,7 @@ def train_model(train_dataset, valid_dataset, args):
         for batch_idx, (txt_feats, labels) in enumerate(train_loader):
             labels = labels.to(device)
             txt_feats = txt_feats.to(device)
-            print(txt_feats.size())
+            #print(txt_feats.size())
             outputs = model(txt_feats)
             loss = criterion(outputs, labels)
             
