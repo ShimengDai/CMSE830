@@ -23,7 +23,7 @@ Feature_extraction:
     min_count: 1
 
   TFIDF_configs:
-    use_idf: True
+    use_idf: Trueclassifier: RandomForest  #%20Choose%20between:%20RandomForest,%20SVM,%20LogisticRegression
     min_df: 5
 
   BERTEmbedding_configs:
