@@ -17,7 +17,7 @@ Data_setup:
 
 
 Feature_extraction:
-  method: GPT2Embedding # TFIDF # BERTEmbedding # GPT2Embedding # P_BERTEmbedding # P_GPT2Embeddin # MeanWordEmbedding
+  method: TFIDF # TFIDF # BERTEmbedding # GPT2Embedding # P_BERTEmbedding # P_GPT2Embeddin # MeanWordEmbedding
   
   MeanWordEmbedding_configs:
     min_count: 1
