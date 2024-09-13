@@ -3,7 +3,7 @@ import os
 import sys
 import random
 import pickle
-from utils.nonDNN_models import RandomForest, SVM, LogisticRegression
+from utils.nonDNN_models import RandomForest, SVM, LR
 from utils.nonDNN_utils import generate_hyperparameter_grid, save_best_model_info, ModelTracker
 from sklearn.metrics import classification_report, f1_score, accuracy_score, confusion_matrix
 from sklearn.metrics import roc_curve, auc, roc_auc_score
