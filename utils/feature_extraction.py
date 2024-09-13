@@ -154,39 +154,14 @@ class P_GPT2Embedding(object):
 
         return X_train_vectors_gpt2, X_val_vectors_gpt2, X_test_vectors_gpt2
 
-    def transform(self, X_data):
+    def transform(self, X):
         embeddings = []
-        max_length = 280  # Set max_length to 280 tokens
-
-        for text in X_data:
-            # Tokenize the input and apply padding to 280 tokens
-            inputs = self.tokenizer(
-                text,
-                return_tensors='pt',
-                max_length=max_length,  # Hardcoded max length to 280 tokens
-                truncation=True,
-                padding='max_length'  # Ensure all sequences are padded to 280 tokens
-            )
-
-            # Move inputs to the appropriate device (GPU if available)
-            inputs = {key: val.to(self.device) for key, val in inputs.items()}
-
-            # Extract embeddings without computing gradients
+        for sentence in X:
+            inputs = self.tokenizer(sentence, return_tensors='pt', truncation=True, padding=True, max_length=512).to(self.device)
             with torch.no_grad():
                 outputs = self.model(**inputs)
-
-            # Take the last hidden state which is a sequence of token embeddings
-            last_hidden_state = outputs.last_hidden_state  # Shape: (batch_size, sequence_length, embedding_dim)
-            #print(last_hidden_state.size())
-            # Remove the extra dimension if necessary
-            last_hidden_state = torch.squeeze(last_hidden_state)  # Removes the extra 1 dimension if it exists
-            #print(last_hidden_state.size())
-            # Append the 3D tensor for this tweet to the embeddings list
-            embeddings.append(last_hidden_state.cpu().numpy())
-
-        # Convert the list of embeddings to a numpy array with shape (num_tweets, 280, embedding_dim)
+            embeddings.append(outputs.last_hidden_state[:, 0, :].cpu().numpy().flatten())
         return np.array(embeddings)
-
 
 
 
@@ -265,12 +240,35 @@ class GPT2Embedding(object):
 
         return X_train_vectors_gpt2, X_val_vectors_gpt2, X_test_vectors_gpt2
 
-    def transform(self, X):
+    def transform(self, X_data):
         embeddings = []
-        for sentence in X:
-            inputs = self.tokenizer(sentence, return_tensors='pt', truncation=True, padding=True, max_length=512).to(self.device)
+        max_length = 280  # Set max_length to 280 tokens
+
+        for text in X_data:
+            # Tokenize the input and apply padding to 280 tokens
+            inputs = self.tokenizer(
+                text,
+                return_tensors='pt',
+                max_length=max_length,  # Hardcoded max length to 280 tokens
+                truncation=True,
+                padding='max_length'  # Ensure all sequences are padded to 280 tokens
+            )
+
+            # Move inputs to the appropriate device (GPU if available)
+            inputs = {key: val.to(self.device) for key, val in inputs.items()}
+
+            # Extract embeddings without computing gradients
             with torch.no_grad():
                 outputs = self.model(**inputs)
-            # Remove the singleton dimension
-            embeddings.append(outputs.last_hidden_state.squeeze(1).cpu().numpy())
+
+            # Take the last hidden state which is a sequence of token embeddings
+            last_hidden_state = outputs.last_hidden_state  # Shape: (batch_size, sequence_length, embedding_dim)
+            #print(last_hidden_state.size())
+            # Remove the extra dimension if necessary
+            last_hidden_state = torch.squeeze(last_hidden_state)  # Removes the extra 1 dimension if it exists
+            #print(last_hidden_state.size())
+            # Append the 3D tensor for this tweet to the embeddings list
+            embeddings.append(last_hidden_state.cpu().numpy())
+
+        # Convert the list of embeddings to a numpy array with shape (num_tweets, 280, embedding_dim)
         return np.array(embeddings)
