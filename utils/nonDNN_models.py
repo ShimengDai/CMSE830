@@ -89,7 +89,7 @@ class SVM(object):
 
 
 # Logistic Regression Model
-class LogisticRegression(object):
+class LR(object):
     def __init__(self, configs):
         self.configs = configs
     

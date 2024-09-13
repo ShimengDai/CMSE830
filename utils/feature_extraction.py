@@ -31,6 +31,10 @@ class MeanEmbeddingVectorizer(object):
                     or [np.zeros(self.dim)], axis=0)
             for words in X
         ])
+    
+
+
+
 
 class MeanWordEmbedding(object):
     """
@@ -69,6 +73,81 @@ class MeanWordEmbedding(object):
             pickle.dump(modelw, outp)
 
         return X_train_vectors_w2v, X_val_vectors_w2v, X_test_vectors_w2v
+    
+
+
+
+
+class word2vec_3D(object):
+    """
+    Converting sentence to a sequence of word vectors using Word2Vec (without averaging)
+    """
+    def __init__(self, configs):
+        self.configs = configs
+    
+    def __call__(self, **kwargs):
+        data = kwargs['data']
+        X_train = kwargs['X_train']
+        X_val = kwargs['X_val']
+        X_test = kwargs['X_test']
+        
+        # Convert preprocessed sentence to tokenized sentence
+        data['clean_text_tok'] = [nltk.word_tokenize(i) for i in data['clean_text']]
+        
+        # Train Word2Vec model
+        model = Word2Vec(data['clean_text_tok'], min_count=self.configs['min_count'])
+
+        w2v = dict(zip(model.wv.index_to_key, model.wv.vectors))  # Combination of word and its vector
+        
+        # Tokenize the input data for training, validation, and test sets
+        X_train_tok = [nltk.word_tokenize(i) for i in X_train]
+        X_val_tok = [nltk.word_tokenize(i) for i in X_val]
+        X_test_tok = [nltk.word_tokenize(i) for i in X_test]
+
+        # Transform each tokenized sentence to its corresponding word vectors
+        X_train_vectors_w2v = self.transform(X_train_tok, w2v)
+        X_val_vectors_w2v = self.transform(X_val_tok, w2v)
+        X_test_vectors_w2v = self.transform(X_test_tok, w2v)
+        
+        # Save Word2Vec model
+        with open('exp/trained_models/w2v_model_non_avg.pkl', 'wb') as outp:
+            pickle.dump(model, outp)
+
+        return X_train_vectors_w2v, X_val_vectors_w2v, X_test_vectors_w2v
+    
+    def transform(self, tokenized_sentences, w2v):
+        """
+        Convert tokenized sentences into a sequence of word vectors (without averaging).
+        Each sentence is converted to a sequence of word vectors, and padding is applied to make all sequences the same length.
+        """
+        max_length = max([len(sent) for sent in tokenized_sentences])  # Get the max sentence length
+
+        vectorized_sentences = []
+        
+        for sentence in tokenized_sentences:
+            sentence_vectors = []
+            
+            for word in sentence:
+                if word in w2v:
+                    sentence_vectors.append(w2v[word])  # Get the vector for each word
+                else:
+                    sentence_vectors.append(np.zeros(self.configs['vector_size']))  # Use a zero vector for unknown words
+
+            # Padding: Add zero vectors if the sentence is shorter than the max length
+            while len(sentence_vectors) < max_length:
+                sentence_vectors.append(np.zeros(self.configs['vector_size']))
+
+            vectorized_sentences.append(sentence_vectors)
+        
+        return np.array(vectorized_sentences)  # Return as a 3D numpy array (num_sentences, max_length, vector_size)
+
+
+
+
+
+
+
+
 
 class TFIDF(object):
     """

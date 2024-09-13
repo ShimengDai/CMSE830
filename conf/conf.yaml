@@ -21,6 +21,11 @@ Feature_extraction:
   
   MeanWordEmbedding_configs:
     min_count: 1
+  
+  word2vec_3D_configs:
+    min_count: 1  # Same as MeanWordEmbedding, defines minimum frequency of words to include
+    vector_size: 300  # Set the size of the word vectors (e.g., 300 dimensions)
+
 
   TFIDF_configs:
     use_idf: True
@@ -63,7 +68,7 @@ New_data_setup:
 
 NonDNN_setup:
 
-  classifier: LogisticRegressionModel  # Choose between: RandomForest, SVM, LogisticRegressionModel
+  classifier: LR  # Choose between: RandomForest, SVM, LogisticRegressionModel
 
   RandomForest_configs:
     n_estimators: [50, 100, 150, 200, 250]
@@ -77,7 +82,7 @@ NonDNN_setup:
     C: [0.1, 1, 10, 100]  # Regularization parameter for SVM
     seed: 57  # Random seed
 
-  LogisticRegression_configs:
+  LR_configs:
     C: [0.01, 0.1, 1, 10, 100]  # Regularization parameter for Logistic Regression
     max_iter: 1000  # Maximum number of iterations
     seed: 57  # Random seed
