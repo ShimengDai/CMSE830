@@ -62,9 +62,20 @@ New_data_setup:
   pred_col: pred
 
 NonDNN_setup:
-  classifier: RandomForest
+  classifier: RandomForest  # Choose between: RandomForest, SVM, LogisticRegression
   RandomForest_configs:
     n_estimators: [50, 100, 150, 200, 250]
     max_depth: [10, 20, 30, 40, 50]
     min_samples_split: [2, 5, 10]
     min_samples_leaf: [1]
+
+
+  SVM_configs:
+    kernel: ['linear', 'rbf']  # Specify the kernels to try (e.g., linear, rbf, poly)
+    C: [0.1, 1, 10, 100]  # Regularization parameter for SVM
+    seed: 42  # Random seed
+
+  LogisticRegression_configs:
+    C: [0.01, 0.1, 1, 10, 100]  # Regularization parameter for Logistic Regression
+    max_iter: 1000  # Maximum number of iterations
+    seed: 42  # Random seed
