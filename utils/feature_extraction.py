@@ -226,6 +226,12 @@ class GPT2Embedding(object):
         self.configs = configs
         self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
         self.tokenizer = GPT2Tokenizer.from_pretrained('gpt2')
+
+        # Set pad_token to eos_token or define a custom one
+        self.tokenizer.pad_token = self.tokenizer.eos_token  # Use eos_token as padding token
+        # If you want to add a custom PAD token instead, you can do this:
+        # self.tokenizer.add_special_tokens({'pad_token': '[PAD]'})
+
         self.model = GPT2Model.from_pretrained('gpt2').to(self.device)
         self.dim = 768  # GPT-2 base model's output dimension
 
@@ -263,12 +269,13 @@ class GPT2Embedding(object):
 
             # Take the last hidden state which is a sequence of token embeddings
             last_hidden_state = outputs.last_hidden_state  # Shape: (batch_size, sequence_length, embedding_dim)
-            #print(last_hidden_state.size())
-            # Remove the extra dimension if necessary
-            last_hidden_state = torch.squeeze(last_hidden_state)  # Removes the extra 1 dimension if it exists
-            #print(last_hidden_state.size())
+
+            # Use torch.squeeze() to remove any extra dimensions
+            last_hidden_state = torch.squeeze(last_hidden_state)
+
             # Append the 3D tensor for this tweet to the embeddings list
             embeddings.append(last_hidden_state.cpu().numpy())
 
         # Convert the list of embeddings to a numpy array with shape (num_tweets, 280, embedding_dim)
         return np.array(embeddings)
+
