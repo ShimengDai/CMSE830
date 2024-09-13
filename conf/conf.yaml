@@ -1,5 +1,5 @@
 Corpus:
-  data_dir: "C:\\Users\\daish\\OneDrive\\Desktop\\Project\\data"
+  data_dir: "C:\\Users\\daish\\OneDrive\\Desktop\\Tweet_Classification\\data"
   data_filename: CRT_topic.csv
   new_data_filename: new_tweets.csv
 
@@ -17,13 +17,13 @@ Data_setup:
 
 
 Feature_extraction:
-  method: P_BERTEmbedding # TFIDF # BERTEmbedding # GPT2Embedding # P_BERTEmbedding # P_GPT2Embeddin # MeanWordEmbedding
+  method: TFIDF # TFIDF # BERTEmbedding # GPT2Embedding # P_BERTEmbedding # P_GPT2Embeddin # MeanWordEmbedding
   
   MeanWordEmbedding_configs:
     min_count: 1
 
   TFIDF_configs:
-    use_idf: Trueclassifier: RandomForest  #%20Choose%20between:%20RandomForest,%20SVM,%20LogisticRegression
+    use_idf: True
     min_df: 5
 
   BERTEmbedding_configs:
@@ -62,7 +62,9 @@ New_data_setup:
   pred_col: pred
 
 NonDNN_setup:
-  classifier: RandomForest  # Choose between: RandomForest, SVM, LogisticRegression
+
+  classifier: LogisticRegressionModel  # Choose between: RandomForest, SVM, LogisticRegressionModel
+
   RandomForest_configs:
     n_estimators: [50, 100, 150, 200, 250]
     max_depth: [10, 20, 30, 40, 50]
@@ -73,9 +75,9 @@ NonDNN_setup:
   SVM_configs:
     kernel: ['linear', 'rbf']  # Specify the kernels to try (e.g., linear, rbf, poly)
     C: [0.1, 1, 10, 100]  # Regularization parameter for SVM
-    seed: 42  # Random seed
+    seed: 57  # Random seed
 
   LogisticRegression_configs:
     C: [0.01, 0.1, 1, 10, 100]  # Regularization parameter for Logistic Regression
     max_iter: 1000  # Maximum number of iterations
-    seed: 42  # Random seed
+    seed: 57  # Random seed
