@@ -108,6 +108,11 @@ class word2vec_3D(object):
         X_train_vectors_w2v = self.transform(X_train_tok, w2v)
         X_val_vectors_w2v = self.transform(X_val_tok, w2v)
         X_test_vectors_w2v = self.transform(X_test_tok, w2v)
+
+        # Convert to torch.float32
+        X_train_vectors_w2v = torch.tensor(X_train_vectors_w2v, dtype=torch.float32)
+        X_val_vectors_w2v = torch.tensor(X_val_vectors_w2v, dtype=torch.float32)
+        X_test_vectors_w2v = torch.tensor(X_test_vectors_w2v, dtype=torch.float32)
         
         # Save Word2Vec model
         with open('exp/trained_models/w2v_model_non_avg.pkl', 'wb') as outp:
@@ -118,38 +123,35 @@ class word2vec_3D(object):
     def transform(self, tokenized_sentences, w2v):
         """
         Convert tokenized sentences into a sequence of word vectors (without averaging).
-        Each sentence is converted to a sequence of word vectors, with padding or truncation to 280 tokens.
+        Each sentence is converted to a sequence of word vectors, and padding is applied to make all sequences the same length.
         """
         max_length = 280  # Set maximum tweet length to 280 tokens
+        vector_size = self.configs['vector_size']  # Ensure this is consistent
 
         vectorized_sentences = []
-        
+
         for sentence in tokenized_sentences:
             sentence_vectors = []
-            
-            for word in sentence[:max_length]:  # Truncate sentence to max_length if necessary
+
+            for word in sentence[:max_length]:
                 if word in w2v:
                     sentence_vectors.append(w2v[word])  # Get the vector for each word
                 else:
-                    sentence_vectors.append(np.zeros(self.configs['vector_size']))  # Use a zero vector for unknown words
+                    sentence_vectors.append(np.zeros(vector_size))  # Use a zero vector for unknown words
 
             # Padding: Add zero vectors if the sentence is shorter than max_length
-            if len(sentence_vectors) < max_length:
-                padding_vectors = [np.zeros(self.configs['vector_size'])] * (max_length - len(sentence_vectors))
-                sentence_vectors.extend(padding_vectors)
-                print(sentence_vectors.shape)
+            while len(sentence_vectors) < max_length:
+                sentence_vectors.append(np.zeros(vector_size))
+
             vectorized_sentences.append(sentence_vectors)
 
-        # Convert the padded sentences to a 3D numpy array (num_sentences, max_length, vector_size)
-        return np.array(vectorized_sentences)
+        # Convert the list of sentences (each a list of word vectors) to a 3D numpy array
+        result = np.array(vectorized_sentences)
+        return result
 
 
 
-
-
-
-
-
+ 
 
 
 class TFIDF(object):

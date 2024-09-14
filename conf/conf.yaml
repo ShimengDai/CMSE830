@@ -24,7 +24,7 @@ Feature_extraction:
   
   word2vec_3D_configs:
     min_count: 1  # Same as MeanWordEmbedding, defines minimum frequency of words to include
-    vector_size: 300  # Set the size of the word vectors (e.g., 300 dimensions)
+    vector_size: 100  # Set the size of the word vectors (e.g., 300 dimensions)
 
 
   TFIDF_configs:
