@@ -80,7 +80,7 @@ class MeanWordEmbedding(object):
 
 class word2vec_3D(object):
     """
-    Converting sentence to a sequence of word vectors using Word2Vec (without averaging)
+    Converting sentence to a sequence of word vectors using Word2Vec (without averaging).
     """
     def __init__(self, configs):
         self.configs = configs
@@ -118,28 +118,30 @@ class word2vec_3D(object):
     def transform(self, tokenized_sentences, w2v):
         """
         Convert tokenized sentences into a sequence of word vectors (without averaging).
-        Each sentence is converted to a sequence of word vectors, and padding is applied to make all sequences the same length.
+        Each sentence is converted to a sequence of word vectors, with padding or truncation to 280 tokens.
         """
-        max_length = max([len(sent) for sent in tokenized_sentences])  # Get the max sentence length
+        max_length = 280  # Set maximum tweet length to 280 tokens
 
         vectorized_sentences = []
         
         for sentence in tokenized_sentences:
             sentence_vectors = []
             
-            for word in sentence:
+            for word in sentence[:max_length]:  # Truncate sentence to max_length if necessary
                 if word in w2v:
                     sentence_vectors.append(w2v[word])  # Get the vector for each word
                 else:
                     sentence_vectors.append(np.zeros(self.configs['vector_size']))  # Use a zero vector for unknown words
 
-            # Padding: Add zero vectors if the sentence is shorter than the max length
-            while len(sentence_vectors) < max_length:
-                sentence_vectors.append(np.zeros(self.configs['vector_size']))
+            # Padding: Add zero vectors if the sentence is shorter than max_length
+            if len(sentence_vectors) < max_length:
+                padding_vectors = [np.zeros(self.configs['vector_size'])] * (max_length - len(sentence_vectors))
+                sentence_vectors.extend(padding_vectors)
 
             vectorized_sentences.append(sentence_vectors)
         
-        return np.array(vectorized_sentences)  # Return as a 3D numpy array (num_sentences, max_length, vector_size)
+        # Convert the padded sentences to a 3D numpy array (num_sentences, max_length, vector_size)
+        return np.array(vectorized_sentences)
 
 
 
