@@ -151,6 +151,7 @@ class word2vec_3D(object):
 
 
 
+
 class TFIDF(object):
     """
     Extract TF-IDF features.
