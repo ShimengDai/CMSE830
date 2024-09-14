@@ -137,9 +137,9 @@ class word2vec_3D(object):
             if len(sentence_vectors) < max_length:
                 padding_vectors = [np.zeros(self.configs['vector_size'])] * (max_length - len(sentence_vectors))
                 sentence_vectors.extend(padding_vectors)
-
+                print(sentence_vectors.shape)
             vectorized_sentences.append(sentence_vectors)
-        
+
         # Convert the padded sentences to a 3D numpy array (num_sentences, max_length, vector_size)
         return np.array(vectorized_sentences)
 
