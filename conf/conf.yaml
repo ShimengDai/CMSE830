@@ -14,7 +14,11 @@ Data_setup:
   test_ratio: 0.1
   
 
+cross_validation_setup:
+  k_folds: 10  # Number of folds for cross-validation
+  random_seed: 57  # Random seed for reproducibility
 
+  
 
 Feature_extraction:
   method: word2vec_3D # TFIDF # BERTEmbedding # GPT2Embedding # P_BERTEmbedding # P_GPT2Embeddin # MeanWordEmbedding #word2vec_3D
