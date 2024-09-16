@@ -38,12 +38,13 @@ def prepare_data(args):
     # Conditional preprocessing based on the feature extraction method
     if feat_extraction_method in ['BERTEmbedding', 'GPT2Embedding']:
         print('Using raw text for BERT or GPT-2...')
-        text_data = data[text_col].fillna('').astype(str)  # Raw text for transformers
+        text_data = data[text_col].fillna('').astype(str)
     else:  # TFIDF or Word2Vec
         print('Preprocessing tweets...', end=' ')
         data = data.dropna(subset=[text_col])
         data[text_col] = data[text_col].fillna('').astype(str)
-        data['clean_text'] = data[text_col].apply(lambda x: preprocessing_compose(x))  # Preprocessed text for traditional embeddings
+        data['clean_text'] = data[text_col].apply(lambda x: preprocessing_compose(x))  # Ensure text is cleaned
+        data['clean_text_tok'] = data['clean_text'].apply(lambda x: nltk.word_tokenize(x))  # Tokenize text for Word2Vec
         print('Done')
         text_data = data['clean_text']
 
