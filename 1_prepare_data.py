@@ -35,11 +35,20 @@ def prepare_data(args):
         print('Balancing the data so all classes have equal no. of observations (value: count)')
         data = balance_data(data, label_col, random_seed)
 
-    X = data[text_col].values
-    y = data[label_col].values
+    # Conditional preprocessing based on the feature extraction method
+    if feat_extraction_method in ['BERTEmbedding', 'GPT2Embedding']:
+        print('Using raw text for BERT or GPT-2...')
+        text_data = data[text_col].fillna('').astype(str)  # Raw text for transformers
+    else:  # TFIDF or Word2Vec
+        print('Preprocessing tweets...', end=' ')
+        data = data.dropna(subset=[text_col])
+        data[text_col] = data[text_col].fillna('').astype(str)
+        data['clean_text'] = data[text_col].apply(lambda x: preprocessing_compose(x))  # Preprocessed text for traditional embeddings
+        print('Done')
+        text_data = data['clean_text']
 
     # Split data into training-validation and test sets
-    X_train_val, X_test, y_train_val, y_test = train_test_split(X, y, test_size=test_ratio, random_state=random_seed)
+    X_train_val, X_test, y_train_val, y_test = train_test_split(text_data, data[label_col].values, test_size=test_ratio, random_state=random_seed)
     print(f'Train/Validation size: {len(X_train_val)}, Test size: {len(X_test)}')
 
     # Initialize k-fold cross-validation for the training-validation set
