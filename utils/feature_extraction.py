@@ -39,23 +39,42 @@ class MeanWordEmbedding(object):
         X_val = kwargs['X_val']
         X_test = kwargs['X_test']
 
-        data['clean_text_tok'] = [nltk.word_tokenize(i) for i in data['clean_text']]
+        # Tokenize X_train only if it's not None
+        if X_train is not None:
+            X_train_tok = [nltk.word_tokenize(i) for i in X_train]
+        else:
+            X_train_tok = None
+
+        # Tokenize X_val only if it's not None
+        if X_val is not None:
+            X_val_tok = [nltk.word_tokenize(i) for i in X_val]
+        else:
+            X_val_tok = None
+
+        # Tokenize X_test only if it's not None
+        if X_test is not None:
+            X_test_tok = [nltk.word_tokenize(i) for i in X_test]
+        else:
+            X_test_tok = None
 
         model = Word2Vec(data['clean_text_tok'], min_count=self.configs['min_count'])
         w2v = dict(zip(model.wv.index_to_key, model.wv.vectors))
         modelw = MeanEmbeddingVectorizer(w2v)
 
-        X_train_tok = [nltk.word_tokenize(i) for i in X_train]
-        X_val_tok = [nltk.word_tokenize(i) for i in X_val]
+        if X_train_tok is not None:
+            X_train_vectors_w2v = modelw.transform(X_train_tok)
+        else:
+            X_train_vectors_w2v = None
 
-        if X_test is not None:
-            X_test_tok = [nltk.word_tokenize(i) for i in X_test]
+        if X_val_tok is not None:
+            X_val_vectors_w2v = modelw.transform(X_val_tok)
+        else:
+            X_val_vectors_w2v = None
+
+        if X_test_tok is not None:
             X_test_vectors_w2v = modelw.transform(X_test_tok)
         else:
             X_test_vectors_w2v = None
-
-        X_train_vectors_w2v = modelw.transform(X_train_tok)
-        X_val_vectors_w2v = modelw.transform(X_val_tok)
 
         return X_train_vectors_w2v, X_val_vectors_w2v, X_test_vectors_w2v
 
@@ -70,21 +89,41 @@ class word2vec_3D(object):
         X_val = kwargs['X_val']
         X_test = kwargs['X_test']
 
-        data['clean_text_tok'] = [nltk.word_tokenize(i) for i in data['clean_text']]
+        # Tokenize X_train only if it's not None
+        if X_train is not None:
+            X_train_tok = [nltk.word_tokenize(i) for i in X_train]
+        else:
+            X_train_tok = None
+
+        # Tokenize X_val only if it's not None
+        if X_val is not None:
+            X_val_tok = [nltk.word_tokenize(i) for i in X_val]
+        else:
+            X_val_tok = None
+
+        # Tokenize X_test only if it's not None
+        if X_test is not None:
+            X_test_tok = [nltk.word_tokenize(i) for i in X_test]
+        else:
+            X_test_tok = None
+
         model = Word2Vec(data['clean_text_tok'], min_count=self.configs['min_count'])
         w2v = dict(zip(model.wv.index_to_key, model.wv.vectors))
 
-        X_train_tok = [nltk.word_tokenize(i) for i in X_train]
-        X_val_tok = [nltk.word_tokenize(i) for i in X_val]
+        if X_train_tok is not None:
+            X_train_vectors_w2v = self.transform(X_train_tok, w2v)
+        else:
+            X_train_vectors_w2v = None
 
-        if X_test is not None:
-            X_test_tok = [nltk.word_tokenize(i) for i in X_test]
+        if X_val_tok is not None:
+            X_val_vectors_w2v = self.transform(X_val_tok, w2v)
+        else:
+            X_val_vectors_w2v = None
+
+        if X_test_tok is not None:
             X_test_vectors_w2v = self.transform(X_test_tok, w2v)
         else:
             X_test_vectors_w2v = None
-
-        X_train_vectors_w2v = self.transform(X_train_tok, w2v)
-        X_val_vectors_w2v = self.transform(X_val_tok, w2v)
 
         return X_train_vectors_w2v, X_val_vectors_w2v, X_test_vectors_w2v
 
@@ -123,16 +162,17 @@ class TFIDF(object):
         self.tfidf_vectorizer = TfidfVectorizer(min_df=self.configs['min_df'], use_idf=self.configs['use_idf'])
         X_train_vectors_tfidf = self.tfidf_vectorizer.fit_transform(X_train)
 
-        X_val_vectors_tfidf = self.tfidf_vectorizer.transform(X_val)
+        if X_val is not None:
+            X_val_vectors_tfidf = self.tfidf_vectorizer.transform(X_val)
+        else:
+            X_val_vectors_tfidf = None
 
         if X_test is not None:
-            X_test_vectors_tfidf = self.tfidf_vectorizer.transform(X_test)
-            X_test_vectors_tfidf = X_test_vectors_tfidf.toarray().astype('float32')
+            X_test_vectors_tfidf = self.tfidf_vectorizer.transform(X_test).toarray().astype('float32')
         else:
             X_test_vectors_tfidf = None
 
         X_train_vectors_tfidf = X_train_vectors_tfidf.toarray().astype('float32')
-        X_val_vectors_tfidf = X_val_vectors_tfidf.toarray().astype('float32')
 
         return X_train_vectors_tfidf, X_val_vectors_tfidf, X_test_vectors_tfidf
 
@@ -150,8 +190,15 @@ class P_BERTEmbedding(object):
         X_val = kwargs['X_val']
         X_test = kwargs['X_test']
 
-        X_train_vectors_bert = self.transform(X_train)
-        X_val_vectors_bert = self.transform(X_val)
+        if X_train is not None:
+            X_train_vectors_bert = self.transform(X_train)
+        else:
+            X_train_vectors_bert = None
+
+        if X_val is not None:
+            X_val_vectors_bert = self.transform(X_val)
+        else:
+            X_val_vectors_bert = None
 
         if X_test is not None:
             X_test_vectors_bert = self.transform(X_test)
@@ -183,8 +230,15 @@ class P_GPT2Embedding(object):
         X_val = kwargs['X_val']
         X_test = kwargs['X_test']
 
-        X_train_vectors_gpt2 = self.transform(X_train)
-        X_val_vectors_gpt2 = self.transform(X_val)
+        if X_train is not None:
+            X_train_vectors_gpt2 = self.transform(X_train)
+        else:
+            X_train_vectors_gpt2 = None
+
+        if X_val is not None:
+            X_val_vectors_gpt2 = self.transform(X_val)
+        else:
+            X_val_vectors_gpt2 = None
 
         if X_test is not None:
             X_test_vectors_gpt2 = self.transform(X_test)
@@ -216,8 +270,15 @@ class BERTEmbedding(object):
         X_val = kwargs['X_val']
         X_test = kwargs['X_test']
 
-        X_train_vectors_bert = self.transform(X_train)
-        X_val_vectors_bert = self.transform(X_val)
+        if X_train is not None:
+            X_train_vectors_bert = self.transform(X_train)
+        else:
+            X_train_vectors_bert = None
+
+        if X_val is not None:
+            X_val_vectors_bert = self.transform(X_val)
+        else:
+            X_val_vectors_bert = None
 
         if X_test is not None:
             X_test_vectors_bert = self.transform(X_test)
@@ -257,8 +318,15 @@ class GPT2Embedding(object):
         X_val = kwargs['X_val']
         X_test = kwargs['X_test']
 
-        X_train_vectors_gpt2 = self.transform(X_train)
-        X_val_vectors_gpt2 = self.transform(X_val)
+        if X_train is not None:
+            X_train_vectors_gpt2 = self.transform(X_train)
+        else:
+            X_train_vectors_gpt2 = None
+
+        if X_val is not None:
+            X_val_vectors_gpt2 = self.transform(X_val)
+        else:
+            X_val_vectors_gpt2 = None
 
         if X_test is not None:
             X_test_vectors_gpt2 = self.transform(X_test)
