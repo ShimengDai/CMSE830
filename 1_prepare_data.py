@@ -66,10 +66,12 @@ def prepare_data(args):
         # Feature extraction based on the specified method
         feature_extractor = getattr(sys.modules[__name__], feat_extraction_method)(feat_extraction_configs)
 
-        X_train_vectors, X_val_vectors = feature_extractor(data=data,
-                                                           X_train=X_train,
-                                                           X_val=X_val,
-                                                           X_test=None)  # No test set during cross-validation
+        # Feature extraction based on the specified method
+        X_train_vectors, X_val_vectors, _ = feature_extractor(data=data,
+                                                            X_train=X_train,
+                                                            X_val=X_val,
+                                                            X_test=None)  # No test set during cross-validation
+  # No test set during cross-validation
         print(f'Fold {fold_idx + 1} - Feature extraction complete.')
 
         # Save the fitted feature extractor for this fold
