@@ -51,6 +51,9 @@ def prepare_data(args):
     X_train_val, X_test, y_train_val, y_test = train_test_split(text_data, data[label_col].values, test_size=test_ratio, random_state=random_seed)
     print(f'Train/Validation size: {len(X_train_val)}, Test size: {len(X_test)}')
 
+    X_train_val = np.array(X_train_val)
+    y_train_val = np.array(y_train_val)
+
     # Initialize k-fold cross-validation for the training-validation set
     kf = KFold(n_splits=k_folds, shuffle=True, random_state=random_seed)
 
