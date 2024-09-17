@@ -105,7 +105,8 @@ def train_model(args):
                     val_txt_feats = val_txt_feats.to(device)
 
                     outputs = model(val_txt_feats)
-                    loss = criterion(outputs, val_labels)
+                    loss = criterion(outputs, val_labels.long())
+
                     val_loss.append(loss.detach().cpu().numpy())
 
                     _, predicted = torch.max(outputs.data, 1)
