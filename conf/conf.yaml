@@ -56,7 +56,7 @@ Feature_extraction:
 
 Training_setup:
   input_size: 3326 # For nonDNN
-  epochs: 20
+  epochs: 5
   batch_size: 4
   learning_rate: 0.001
 
