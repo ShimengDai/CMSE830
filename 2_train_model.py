@@ -76,7 +76,7 @@ def train_model(args):
 
                 optimizer.zero_grad()
                 outputs = model(txt_feats)
-                loss = criterion(outputs, labels)
+                loss = criterion(outputs, labels.long())  # Convert labels to LongTensor
                 loss.backward()
                 optimizer.step()
                 scheduler.step()
