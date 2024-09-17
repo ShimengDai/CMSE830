@@ -15,7 +15,7 @@ Data_setup:
   
 
 cross_validation_setup:
-  k_folds: 10  # Number of folds for cross-validation
+  k_folds: 3  # Number of folds for cross-validation
   random_seed: 57  # Random seed for reproducibility
 
 
