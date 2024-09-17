@@ -76,6 +76,11 @@ def train_model(args):
 
                 optimizer.zero_grad()
                 outputs = model(txt_feats)
+
+                print(f"outputs shape: {outputs.shape}, val_labels shape: {val_labels.shape}")
+                print(f"outputs dtype: {outputs.dtype}, val_labels dtype: {val_labels.dtype}")
+
+
                 loss = criterion(outputs, labels.long())  # Convert labels to LongTensor
                 loss.backward()
                 optimizer.step()
