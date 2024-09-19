@@ -11,6 +11,8 @@ class ModelScorer(object):
         self.metrics = {}
     
     def accuracy(self):
+        print(self.targets)
+        print(self.preds)
         return accuracy_score(self.targets, self.preds)
     
     def precision(self):

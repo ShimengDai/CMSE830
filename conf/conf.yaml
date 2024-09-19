@@ -61,7 +61,7 @@ Training_setup:
   learning_rate: 0.001
 
 Model_setup:
-  model_name: LSTMModel  # FullyConnected, FullyConnected2, LSTMModel
+  model_name: FullyConnected  # FullyConnected, FullyConnected2, LSTMModel
   dropout: 0.5
 
 
