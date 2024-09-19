@@ -64,6 +64,9 @@ def train_model(args):
         optimizer = optim.AdamW(model.parameters(), lr=learning_rate)
         scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=int(len(train_loader)) * 25, gamma=0.7)
 
+        # Track best validation loss for this fold
+        best_val_loss = float('inf')
+
         # Training loop for the current fold
         for epoch in range(epochs):
             model.train()
@@ -77,10 +80,7 @@ def train_model(args):
                 optimizer.zero_grad()
                 outputs = model(txt_feats)
 
-                #print(f"outputs shape: {outputs.shape}")
-                #print(f"outputs dtype: {outputs.dtype}")
-
-
+                # Calculate the loss
                 loss = criterion(outputs, labels.long())  # Convert labels to LongTensor
                 loss.backward()
                 optimizer.step()
@@ -101,11 +101,11 @@ def train_model(args):
 
             with torch.no_grad():
                 for val_batch_idx, (val_txt_feats, val_labels) in enumerate(valid_loader):
-                    val_labels = val_labels.to(device)
+                    val_labels = val_labels.to(device).long()  # Ensure labels are LongTensor
                     val_txt_feats = val_txt_feats.to(device)
 
                     outputs = model(val_txt_feats)
-                    loss = criterion(outputs, val_labels.long())
+                    loss = criterion(outputs, val_labels)
 
                     val_loss.append(loss.detach().cpu().numpy())
 
@@ -124,11 +124,14 @@ def train_model(args):
                           learning_rate=lr)
 
             # Save the model if the best validation loss is encountered
-            if logger.save_best_model:
-                logger.save_model(model)
+            if avg_val_loss < best_val_loss:
+                best_val_loss = avg_val_loss
+                torch.save(model.state_dict(), os.path.join(args.exp_dir, 'trained_models', f'best_model_fold_{fold_idx}.pt'))
 
             print(f"Fold {fold_idx} - Epoch {epoch + 1}: train_acc: {train_acc:.2f}%, val_acc: {val_acc:.2f}%, train_loss: {avg_train_loss:.3f}, val_loss: {avg_val_loss:.3f}, LR: {lr:.2E}")
 
+        # Save the final model for this fold
+        torch.save(model.state_dict(), os.path.join(args.exp_dir, 'trained_models', f'final_model_fold_{fold_idx}.pt'))
         print(f'Fold {fold_idx} completed.\n')
 
     logger.save_history()
